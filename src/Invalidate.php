@@ -58,9 +58,9 @@ class Invalidate
     return $response;
   }
 
-  public function attachToWorker(QueueWorker $worker, string $jobName, LoggerInterface $logger)
+  public function attachToWorker(QueueWorker $worker, string $jobName)
   {
-    $worker->addCallback('default', function ($data) use ($logger) {
+    $worker->addCallback('default', function ($data) {
       try {
         $response = $this->invalidate($data->urls);
 
