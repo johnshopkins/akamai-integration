@@ -14,8 +14,7 @@ class Invalidate
     protected string $host,
     protected string $clientToken,
     protected string $clientSecret,
-    protected string $accessToken,
-    protected ?LoggerInterface $logger = null
+    protected string $accessToken
   )
   {
 
