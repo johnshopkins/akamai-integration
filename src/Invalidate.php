@@ -56,33 +56,4 @@ class Invalidate
 
     return $response;
   }
-
-  public function attachToWorker(QueueWorker $worker, string $jobName = 'default')
-  {
-    $worker->addCallback($jobName, function ($data) {
-      try {
-        $response = $this->invalidate($data->urls);
-
-        // add urls
-        $response->urls = json_encode($data->urls);
-
-        return [
-          'success' => $response->httpStatus === 201,
-          'context' => $response
-        ];
-      } catch (\Throwable $e) {
-        return [
-          'success' => false,
-          'context' => [
-            'exception_type' => get_class($e),
-            'exception_code' => $e->getCode(),
-            'exception_message' => $e->getMessage(),
-            'exception_file' => $e->getFile(),
-            'exception_line' => $e->getLine(),
-            'urls' => json_encode($data->urls),
-          ]
-        ];
-      }
-    });
-  }
 }
