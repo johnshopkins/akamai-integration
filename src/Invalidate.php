@@ -24,6 +24,7 @@ class Invalidate
    * @param $urls
    * @param $network
    * @return object Response object. See examples here: https://techdocs.akamai.com/purge-cache/reference/invalidate-url
+   * @throws \ErrorException
    */
   public function invalidate($urls = [], $network = 'production'): object
   {
