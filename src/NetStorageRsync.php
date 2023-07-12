@@ -56,29 +56,34 @@ class NetStorageRsync
    */
   public function upload(string $sourceDirectory, string $destinationDirectory, array $files = [], bool $dryRun = false): int
   {
+    return $this->rsync($sourceDirectory, $destinationDirectory, $files, false,$dryRun);
+  }
+
+  protected function rsync(string $sourceDirectory, string $destinationDirectory, array $files = [], bool $delete = false, bool $dryRun = false)
+  {
     if (empty($files)) {
       throw new \ErrorException('List of files to include cannot be empty.');
     }
 
-    $command = $this->compileUploadCommand($sourceDirectory, $destinationDirectory, $files, $dryRun);
+    $command = $this->compileCommand($sourceDirectory, $destinationDirectory, $files, $delete,$dryRun);
 
     exec($command, $output, $resultCode);
 
     if ($dryRun && $this->logger) {
-      $this->logger->info('RSYNC dry run', [
+      $this->logger->info('NetStorage RSYNC dry run', [
         'command' => $command,
         'output' => $output,
       ]);
     }
 
     if ($resultCode > 0) {
-      throw new \ErrorException('Failed to RSYNC file to NetStorage. ' . implode(' --- ', $output));
+      throw new \ErrorException('NetStorage RSYNC failed. ' . implode('\n', $output));
     }
 
     return $resultCode;
   }
 
-  public function compileUploadCommand(string $sourceDirectory, string $destinationDirectory, array $files = [], bool $dryRun = false)
+  public function compileCommand(string $sourceDirectory, string $destinationDirectory, array $files = [], bool $delete = false, bool $dryRun = false)
   {
     $include = array_map(function ($filename) {
       $sanitized = addcslashes($filename, '"');
@@ -88,6 +93,7 @@ class NetStorageRsync
     $command = [
       'rsync -a',
       $dryRun ? '--dry-run --verbose' : '',
+      $delete ? '--delete' : '',
       implode(' ', $include),
       '--exclude="*"',
       $this->standardizeDirectory($sourceDirectory),
