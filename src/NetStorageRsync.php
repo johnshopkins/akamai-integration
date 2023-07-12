@@ -59,6 +59,18 @@ class NetStorageRsync
     return $this->rsync($sourceDirectory, $destinationDirectory, $files, false,$dryRun);
   }
 
+  /**
+   * @param string $sourceDirectory
+   * @param string $destinationDirectory
+   * @param array  $files
+   * @param bool   $dryRun
+   * @return int
+   */
+  public function delete(string $sourceDirectory, string $destinationDirectory, array $files = [], bool $dryRun = false): int
+  {
+    return $this->rsync($sourceDirectory, $destinationDirectory, $files, true,$dryRun);
+  }
+
   protected function rsync(string $sourceDirectory, string $destinationDirectory, array $files = [], bool $delete = false, bool $dryRun = false)
   {
     if (empty($files)) {

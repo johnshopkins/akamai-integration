@@ -81,4 +81,15 @@ class NetStorageRsyncTest extends \PHPUnit\Framework\TestCase
     $this->expectException(\InvalidArgumentException::class);
     $rsyncer = new NetStorageRsync('host', 'directory', 'username', 'password');
   }
+
+  public function testCompileCommand_delete()
+  {
+    $rsyncer = new NetStorageRsync('host', '/directory', 'username', 'password');
+
+    // directories already have trailing slashes
+    $actual = $rsyncer->compileCommand('/source/directory/', 'dest/directory/', ['file1\'s.jpg', 'file2"test".gif'], true);
+    $expected = 'rsync -a --delete --include="file1\'s.jpg" --include="file2\"test\".gif" --exclude="*" /source/directory/ username@host:/directory/dest/directory/ 2>&1';
+
+    $this->assertEquals($expected, $actual);
+  }
 }
