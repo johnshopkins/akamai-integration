@@ -55,6 +55,9 @@ class Invalidate
       throw new \ErrorException($response->title . ' - ' . $response->detail, $response->httpStatus);
     }
 
+    // wait until akamai expects the cache purge to complete
+    sleep($response->estimatedSeconds);
+
     return $response;
   }
 }
