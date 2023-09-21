@@ -10,7 +10,7 @@ use Psr\Log\LoggerInterface;
 class Invalidate
 {
   public function __construct(
-    protected \HttpExchange\Interfaces\ClientInterface $http,
+    protected \HttpExchange\Interfaces\ClientAdapterInterface $http,
     protected string $host,
     protected string $clientToken,
     protected string $clientSecret,
@@ -44,20 +44,20 @@ class Invalidate
 
     $url = 'https://' . rtrim($this->host, '/') . $path;
 
-    $this->http->post($url, [
+    $response = $this->http->post($url, [
       'body' => $body,
       'headers' => $headers
     ]);
 
-    $response = $this->http->getBody();
+    $body = $response->getBody();
 
-    if ($response->httpStatus !== 201) {
-      throw new \ErrorException($response->title . ' - ' . $response->detail, $response->httpStatus);
+    if ($response->getStatusCode() !== 201) {
+      throw new \ErrorException($body->title . ' - ' . $body->detail, $body->httpStatus);
     }
 
     // wait until akamai expects the cache purge to complete
-    sleep($response->estimatedSeconds);
+    sleep($body->estimatedSeconds);
 
-    return $response;
+    return $body;
   }
 }

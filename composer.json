@@ -4,7 +4,8 @@
   "license": "MIT",
   "homepage": "http://github.com/johnshopkins/akamai-integration",
   "require": {
-    "akamai-open/edgegrid-auth": "^2.0"
+    "akamai-open/edgegrid-auth": "^2.0",
+    "johnshopkins/http-exchange": "^1.0"
   },
   "autoload": {
     "psr-4" : {
